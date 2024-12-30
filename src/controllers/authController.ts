@@ -2,8 +2,9 @@ import { RequestHandler } from "express";
 import { signupSchema, validadesignupSchema } from "../schemas/signupSchema";
 import { createUser, findUserByEmail, findUserBySlug } from "../services/userService";
 import slug from "slug";
-import { hash } from "bcrypt-ts";
+import { compare, hash } from "bcrypt-ts";
 import { createJWT } from "../utils/jtw";
+import { validadesigninSchema } from "../schemas/signinSchema";
 
 export const signup: RequestHandler = async (req, res) => {
     const data = validadesignupSchema(req.body);
@@ -47,6 +48,37 @@ export const signup: RequestHandler = async (req, res) => {
             name: newUser.name,
             slug: newUser.slug,
             avatar: newUser.avatar
+        }
+    });
+}
+
+export const signin: RequestHandler = async (req, res) => {
+    const data = validadesigninSchema(req.body);
+    if (data.error) {
+        res.json(data);
+        return;
+    }
+
+    const user = await findUserByEmail(data.email);
+    if (!user) {
+        res.status(401).json({ error: "Acesso negado" });
+        return;
+    }
+
+    const verifyPass = await compare(data.password, user.password);
+    if (!verifyPass) {
+        res.status(401).json({ error: "Acesso negado" });
+        return;
+    }
+
+    const token = createJWT({ slug: user.slug });
+
+    res.json({
+        token,
+        user: {
+            name: user.name,
+            slug: user.slug,
+            avatar: user.avatar
         }
     });
 }

@@ -6,7 +6,7 @@ export const mainRouter = Router();
 // mainRouter.get("/privateping");
 
 mainRouter.post("/auth/signup", authController.signup);
-// mainRouter.post("/auth/signin");
+mainRouter.post("/auth/signin", authController.signin);
 
 // mainRouter.post("/tweet");
 // mainRouter.get("/tweet/:id");
