@@ -4,7 +4,7 @@ import { createUser, findUserByEmail, findUserBySlug } from "../services/userSer
 import slug from "slug";
 import { compare, hash } from "bcrypt-ts";
 import { createJWT } from "../utils/jtw";
-import { validadesigninSchema } from "../schemas/signinSchema";
+import { signinSchema, validadesigninSchema } from "../schemas/signinSchema";
 
 export const signup: RequestHandler = async (req, res) => {
     const data = validadesignupSchema(req.body);

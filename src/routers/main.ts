@@ -1,14 +1,18 @@
 import { Router } from "express";
 import * as authController from "../controllers/authController"
+import * as tweetControllet from "../controllers/tweetController"
+import { verifyJTW } from "../utils/jtw";
 
 export const mainRouter = Router();
 
-// mainRouter.get("/privateping");
+mainRouter.get("/ping", verifyJTW, (req, res) => {
+    res.json({ pong: true });
+})
 
 mainRouter.post("/auth/signup", authController.signup);
 mainRouter.post("/auth/signin", authController.signin);
 
-// mainRouter.post("/tweet");
+mainRouter.post("/tweet", verifyJTW, tweetControllet.addTweet);
 // mainRouter.get("/tweet/:id");
 // mainRouter.get("/tweet/:id/answers");
 // mainRouter.post("/tweet/:id/like");
