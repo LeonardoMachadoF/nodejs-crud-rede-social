@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as authController from "../controllers/authController"
-import * as tweetControllet from "../controllers/tweetController"
+import * as tweetController from "../controllers/tweetController"
 import { verifyJTW } from "../utils/jtw";
 
 export const mainRouter = Router();
@@ -12,10 +12,10 @@ mainRouter.get("/ping", verifyJTW, (req, res) => {
 mainRouter.post("/auth/signup", authController.signup);
 mainRouter.post("/auth/signin", authController.signin);
 
-mainRouter.post("/tweet", verifyJTW, tweetControllet.addTweet);
-// mainRouter.get("/tweet/:id");
-// mainRouter.get("/tweet/:id/answers");
-// mainRouter.post("/tweet/:id/like");
+mainRouter.post("/tweet", verifyJTW, tweetController.addTweet);
+mainRouter.get("/tweet/:id", verifyJTW, tweetController.getTweet);
+mainRouter.get("/tweet/:id/answers", verifyJTW, tweetController.getAnswers);
+mainRouter.post("/tweet/:id/like", verifyJTW, tweetController.likeToggle);
 
 // mainRouter.get("/user/:slug");
 // mainRouter.get("/user/:slug/tweets");
