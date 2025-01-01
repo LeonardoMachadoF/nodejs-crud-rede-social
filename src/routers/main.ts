@@ -7,23 +7,7 @@ import * as searchController from "../controllers/searchController"
 import * as avatarController from "../controllers/avatarController"
 import * as coverController from "../controllers/coverController";
 import { verifyJWT } from "../utils/jtw";
-
-import multer from 'multer';
-import path from "path";
-
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, path.resolve(__dirname, '../../public/uploads')); // Caminho absoluto
-        },
-        filename: (req, file, cb) => {
-            // Adiciona timestamp para evitar conflitos de nome
-            const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-            cb(null, `${uniqueSuffix}-${file.originalname}`);
-        },
-    }),
-});
-
+import { upload } from "../utils/multer";
 
 export const mainRouter = Router();
 
