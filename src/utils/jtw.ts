@@ -7,7 +7,7 @@ export const createJWT = ({ slug }: { slug: string }) => {
     return jwt.sign({ slug }, process.env.JWT_SECRET as string);
 }
 
-export const verifyJTW = (req: ExtendedRequest, res: Response, next: NextFunction) => {
+export const verifyJWT = (req: ExtendedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
         res.status(201).json({ error: "Acesso negado" });

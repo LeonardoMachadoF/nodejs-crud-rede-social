@@ -2,30 +2,51 @@ import { Router } from "express";
 import * as authController from "../controllers/authController"
 import * as tweetController from "../controllers/tweetController"
 import * as userController from "../controllers/userController"
-import { verifyJTW } from "../utils/jtw";
+import * as feedController from "../controllers/feedController"
+import * as searchController from "../controllers/searchController"
+import * as avatarController from "../controllers/avatarController"
+import * as coverController from "../controllers/coverController";
+import { verifyJWT } from "../utils/jtw";
+
+import multer from 'multer';
+import path from "path";
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, path.resolve(__dirname, '../../public/uploads')); // Caminho absoluto
+        },
+        filename: (req, file, cb) => {
+            // Adiciona timestamp para evitar conflitos de nome
+            const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+            cb(null, `${uniqueSuffix}-${file.originalname}`);
+        },
+    }),
+});
+
 
 export const mainRouter = Router();
 
-mainRouter.get("/ping", verifyJTW, (req, res) => {
+mainRouter.get("/ping", verifyJWT, (req, res) => {
     res.json({ pong: true });
 })
 
 mainRouter.post("/auth/signup", authController.signup);
 mainRouter.post("/auth/signin", authController.signin);
 
-mainRouter.post("/tweet", verifyJTW, tweetController.addTweet);
-mainRouter.get("/tweet/:id", verifyJTW, tweetController.getTweet);
-mainRouter.get("/tweet/:id/answers", verifyJTW, tweetController.getAnswers);
-mainRouter.post("/tweet/:id/like", verifyJTW, tweetController.likeToggle);
+mainRouter.post("/tweet", verifyJWT, tweetController.addTweet);
+mainRouter.get("/tweet/:id", verifyJWT, tweetController.getTweet);
+mainRouter.get("/tweet/:id/answers", verifyJWT, tweetController.getAnswers);
+mainRouter.post("/tweet/:id/like", verifyJWT, tweetController.likeToggle);
 
-mainRouter.get("/user/:slug", verifyJTW, userController.getUser);
-mainRouter.get("/user/:slug/tweets", verifyJTW, userController.getUserTweets);
-mainRouter.post("/user/:slug/follow", verifyJTW, userController.followToggle);
-mainRouter.put("/user", verifyJTW, userController.updateUser);
-// mainRouter.put("/user/avatar");
-// mainRouter.put("/user/cover");
+mainRouter.get("/user/:slug", verifyJWT, userController.getUser);
+mainRouter.get("/user/:slug/tweets", verifyJWT, userController.getUserTweets);
+mainRouter.post("/user/:slug/follow", verifyJWT, userController.followToggle);
+mainRouter.put("/user", verifyJWT, userController.updateUser);
+mainRouter.put("/user/avatar", verifyJWT, upload.single('avatar'), avatarController.uploadAvatar);
+mainRouter.put("/user/cover", verifyJWT, upload.single('cover'), coverController.uploadCover);
 
-// mainRouter.get("/feed");
-// mainRouter.get("/search");
-// mainRouter.get("/trending");
-// mainRouter.get("/suggestions");
+mainRouter.get("/feed", verifyJWT, feedController.getFeed);
+mainRouter.get("/search", verifyJWT, searchController.searchTweets);
+mainRouter.get("/trending", verifyJWT, searchController.getTrends);
+mainRouter.get("/suggestions", verifyJWT, searchController.getSuggestions);

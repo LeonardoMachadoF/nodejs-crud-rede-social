@@ -134,3 +134,54 @@ export const updateUserInfo = async (slug: string, data: Prisma.UserUpdateInput)
         data
     })
 }
+
+export const getUserFollowing = async (slug: string) => {
+    const following = [];
+    const reqFollow = await prisma.follow.findMany({
+        select: {
+            user2Slug: true
+        },
+        where: {
+            user1Slug: slug
+        }
+    })
+
+    for (let reqItem of reqFollow) {
+        following.push(reqItem.user2Slug);
+    }
+
+    return following;
+}
+
+export const getUserSuggestions = async (slug: string) => {
+    const following = await getUserFollowing(slug);
+    const followingPlustMe = [...following, slug];
+
+    type Suggestion = Pick<
+        Prisma.UserGetPayload<Prisma.UserDefaultArgs>, "name" | "avatar" | "slug"
+    >;
+
+    const suggestions: Suggestion[] = await prisma.$queryRaw`
+        SELECT
+            name, avatar, slug
+        FROM "User"
+        WHERE
+            slug NOT IN (${followingPlustMe.join(",")})
+        ORDER BY RANDOM()
+        LIMIT 2;
+    `;
+
+    for (let i in suggestions) {
+        suggestions[i].avatar = getPublicUrl(suggestions[i].avatar)
+    }
+
+    return suggestions;
+}
+
+export const saveUploadAvatar = async (slug: string, file: string) => {
+    await prisma.user.update({ where: { slug: slug }, data: { avatar: file } });
+}
+
+export const saveUploadCover = async (slug: string, file: string) => {
+    await prisma.user.update({ where: { slug: slug }, data: { cover: file } });
+}
