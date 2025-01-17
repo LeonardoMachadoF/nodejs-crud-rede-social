@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { signupSchema, validadesignupSchema } from "../schemas/signupSchema";
+import { validadesignupSchema } from "../schemas/signupSchema";
 import { createUser, findUserByEmail, findUserBySlug } from "../services/userService";
 import slug from "slug";
 import { compare, hash } from "bcrypt-ts";
@@ -40,14 +40,15 @@ export const signup: RequestHandler = async (req, res) => {
         password: hashPassword
     })
 
-    const token = createJWT({ slug: userSlug });
+    const token = createJWT({ slug: userSlug, role: newUser.role });
 
     res.status(201).json({
         token,
         user: {
             name: newUser.name,
             slug: newUser.slug,
-            avatar: newUser.avatar
+            avatar: newUser.avatar,
+            role: newUser.role
         }
     });
 }
@@ -71,14 +72,15 @@ export const signin: RequestHandler = async (req, res) => {
         return;
     }
 
-    const token = createJWT({ slug: user.slug });
+    const token = createJWT({ slug: user.slug, role: user.role });
 
     res.json({
         token,
         user: {
             name: user.name,
             slug: user.slug,
-            avatar: user.avatar
+            avatar: user.avatar,
+            role: user.role
         }
     });
 }

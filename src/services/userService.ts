@@ -26,7 +26,8 @@ export const findUserBySlug = async (slug: string) => {
             slug: true,
             name: true,
             bio: true,
-            link: true
+            link: true,
+            role: true
         },
         where: { slug }
     });
