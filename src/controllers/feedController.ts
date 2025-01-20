@@ -10,8 +10,8 @@ export const getFeed = async (req: ExtendedRequest, res: Response) => {
         res.json(data);
         return;
     }
-
-    let perPage = 2;
+    console.log(data)
+    let perPage = 4;
     let currentPage = data.page || 0;
 
     const following = await getUserFollowing(req.userSlug as string);

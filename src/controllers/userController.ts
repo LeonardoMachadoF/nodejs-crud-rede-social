@@ -1,10 +1,20 @@
 import { Response } from "express";
 import { ExtendedRequest } from "../types/extended-request";
 import { checkIfFollows, findTweetsByUser, findUserBySlug, follow, getUserFollowersCount, getUserFollowingCount, getUserTweetCount, unfollow, updateUserInfo } from "../services/userService";
-import { validadesignupSchema } from "../schemas/signupSchema";
-import { validadeTweetSchema } from "../schemas/addTweetSchema";
 import { validadeUserTweetsSchema } from "../schemas/userTweetsSchema";
 import { validadeUpdateUserSchema } from "../schemas/updateUserSchema";
+
+export const getUserByToken = async (req: ExtendedRequest, res: Response) => {
+    const slug = req.userSlug;
+
+    const user = await findUserBySlug(slug as string);
+    if (!user) {
+        res.json({ error: "Usuário inexistente" });
+        return;
+    }
+
+    res.json({ user })
+}
 
 export const getUser = async (req: ExtendedRequest, res: Response) => {
     const { slug } = req.params;

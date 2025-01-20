@@ -23,10 +23,12 @@ mainRouter.get("/tweet/:id", verifyJWT(), tweetController.getTweet);
 mainRouter.get("/tweet/:id/answers", verifyJWT(), tweetController.getAnswers);
 mainRouter.post("/tweet/:id/like", verifyJWT(), tweetController.likeToggle);
 
+mainRouter.get("/user/me", verifyJWT(), userController.getUserByToken);
 mainRouter.get("/user/:slug", verifyJWT(), userController.getUser);
 mainRouter.get("/user/:slug/tweets", verifyJWT(), userController.getUserTweets);
 mainRouter.post("/user/:slug/follow", verifyJWT(), userController.followToggle);
 mainRouter.put("/user", verifyJWT(), userController.updateUser);
+
 mainRouter.put("/user/avatar", verifyJWT(), upload.single('avatar'), avatarController.uploadAvatar);
 mainRouter.put("/user/cover", verifyJWT(), upload.single('cover'), coverController.uploadCover);
 

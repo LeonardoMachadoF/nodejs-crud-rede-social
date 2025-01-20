@@ -15,7 +15,11 @@ export const signup: RequestHandler = async (req, res) => {
 
     const hasEmail = await findUserByEmail(data.email);
     if (hasEmail) {
-        res.json({ error: "E-mail já existente" })
+        res.json({
+            error: {
+                email: ["E-mail já existente"]
+            }
+        })
         return;
     }
 
