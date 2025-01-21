@@ -110,31 +110,46 @@ export const findTweetFeed = async (following: string[], currentPage: number, pe
                 select: {
                     name: true,
                     avatar: true,
-                    slug: true
-                }
+                    slug: true,
+                },
             },
             likes: {
                 select: {
-                    userSlug: true
-                }
-            }
+                    userSlug: true,
+                },
+            },
         },
         where: {
             userSlug: { in: following },
-            answerOf: 0
+            answerOf: 0,
         },
         orderBy: { createdAt: 'desc' },
         skip: currentPage * perPage,
-        take: perPage
+        take: perPage,
     });
 
-    for (let tweetIndex in tweets) {
-        tweets[tweetIndex].user.avatar = getPublicUrl(tweets[tweetIndex].user.avatar)
-    }
+    const tweetsWithRetweetCounts = await Promise.all(
+        tweets.map(async (tweet) => {
+            const retweetCount = await prisma.tweet.count({
+                where: {
+                    answerOf: tweet.id,
+                },
+            });
 
-    return tweets;
+            return {
+                ...tweet,
+                retweetCount,
+                user: {
+                    ...tweet.user,
+                    avatar: getPublicUrl(tweet.user.avatar),
+                },
+            };
+        })
+    );
+
+    return tweetsWithRetweetCounts;
+
 }
-
 export const findTweetsByBody = async (bodyContains: string, currentPage: number, perPage: number) => {
     const tweets = await prisma.tweet.findMany({
         include: {
@@ -163,9 +178,24 @@ export const findTweetsByBody = async (bodyContains: string, currentPage: number
         take: perPage
     });
 
-    for (let tweetIndex in tweets) {
-        tweets[tweetIndex].user.avatar = getPublicUrl(tweets[tweetIndex].user.avatar)
-    }
+    const tweetsWithRetweetCounts = await Promise.all(
+        tweets.map(async (tweet) => {
+            const retweetCount = await prisma.tweet.count({
+                where: {
+                    answerOf: tweet.id,
+                },
+            });
 
-    return tweets;
+            return {
+                ...tweet,
+                retweetCount,
+                user: {
+                    ...tweet.user,
+                    avatar: getPublicUrl(tweet.user.avatar),
+                },
+            };
+        })
+    );
+
+    return tweetsWithRetweetCounts;
 }

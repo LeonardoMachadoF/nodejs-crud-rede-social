@@ -163,14 +163,14 @@ export const getUserSuggestions = async (slug: string) => {
     >;
 
     const suggestions: Suggestion[] = await prisma.$queryRaw`
-        SELECT
-            name, avatar, slug
-        FROM "User"
-        WHERE
-            slug NOT IN (${followingPlustMe.join(",")})
-        ORDER BY RANDOM()
-        LIMIT 2;
-    `;
+    SELECT
+        name, avatar, slug
+    FROM "User"
+    WHERE
+        slug NOT IN (${Prisma.join(followingPlustMe)})
+    ORDER BY RANDOM()
+    LIMIT 2;
+`;
 
     for (let i in suggestions) {
         suggestions[i].avatar = getPublicUrl(suggestions[i].avatar)

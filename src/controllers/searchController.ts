@@ -12,7 +12,7 @@ export const searchTweets = async (req: ExtendedRequest, res: Response) => {
         return;
     }
 
-    let perPage = 2;
+    let perPage = 6;
     let currentPage = data.page || 0;
 
     const tweets = await findTweetsByBody(data.q, currentPage, perPage);
