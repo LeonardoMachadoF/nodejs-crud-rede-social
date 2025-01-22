@@ -23,6 +23,7 @@ export const addTweet = async (req: ExtendedRequest, res: Response) => {
     const newTweet = await createTweet({
         slug: req.userSlug as string,
         body: data.body,
+        image: data.imageUrl,
         answer: data.answer ? parseInt(data.answer) : 0
     });
 

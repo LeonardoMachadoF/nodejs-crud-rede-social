@@ -2,7 +2,8 @@ import { z } from "zod";
 
 export const addTweetSchema = z.object({
     body: z.string({ message: "Corpo é obrigatório" }),
-    answer: z.string().optional()
+    answer: z.string().optional(),
+    imageUrl: z.string().url({ message: "A URL da imagem é inválida" }).optional()
 });
 
 export const validadeTweetSchema = (body: Request['body']) => {

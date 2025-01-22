@@ -31,14 +31,16 @@ export const findTweetById = async (id: number) => {
 interface CreateTweet {
     slug: string;
     body: string;
+    image?: string;
     answer?: number;
 }
 
-export const createTweet = async ({ slug, body, answer }: CreateTweet) => {
+export const createTweet = async ({ slug, body, answer, image }: CreateTweet) => {
     const newTweet = await prisma.tweet.create({
         data: {
             body,
             userSlug: slug,
+            image,
             answerOf: answer ?? 0
         }
     });
