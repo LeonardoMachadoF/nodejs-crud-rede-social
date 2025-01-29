@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { mainRouter } from "./routers/main";
+import { mainRouter } from "./routes/mainRouter";
+
 
 const server = express();
 server.use(helmet());
